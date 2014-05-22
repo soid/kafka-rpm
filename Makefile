@@ -1,14 +1,17 @@
-# The git tag/branch of storm you need (i.e. master or 0.8.1.0 )
-GIT_VERSION_TAG=0.8.1.0
+# The git tag/branch of storm you need (i.e. master or 0.8.1.1)
+GIT_VERSION_TAG=0.8.1.1
+
+# The version of scala to build with.
+SCALA_VERSION=2.10.3
 
 #The version for the RPM 
 #BEWARE THAT THIS MAY NOT CONTAIN A '-' !!!
-RPM_VERSION=0.8.1.0
+RPM_VERSION=0.8.1.1
 
 # The next thing is needed to use the latest version.
 # This is a numerical value that should increase with a newer release
 # This may NOT start with a '0' !!
-RPM_VERSION_INTEGER=8100
+RPM_VERSION_INTEGER=8110
 
 # =======================================================================
 
@@ -42,6 +45,7 @@ kafka/kafka.spec: kafka.spec.in kafka-version RELEASE
 	@read REL < RELEASE ; (( REL += 1)) ; echo $${REL} > RELEASE 
 	cat $< | \
 	    sed "\
+	      s@##SCALAVERSION##@$(SCALA_VERSION)@g;\
 	      s@##RPMVERSION##@$(RPM_VERSION)@g;\
 	      s@##RPMRELEASE##@$$(cat RELEASE)@g;\
 	      s@##INTEGERVERSION##@$(RPM_VERSION_INTEGER)@g" > $@ 
@@ -56,7 +60,6 @@ kafka-version: kafka/.git Makefile
 	@( cd kafka; \
 	   git checkout $(GIT_VERSION_TAG) ; \
 	)
-
 
 java-is-installed:
 	@(\
@@ -75,4 +78,3 @@ clean::
 	@echo -n "Cleaning kafka "
 	@rm -rf kafka kafka-$(RPM_VERSION) kafka-$(RPM_VERSION).tar.gz kafka-$(RPM_VERSION)*rpm RPM_BUILDING java-is-installed
 	@echo "done."
-

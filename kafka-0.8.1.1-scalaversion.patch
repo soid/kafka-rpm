@@ -1,0 +1,29 @@
+diff -urN kafka.orig/bin/kafka-run-class.sh kafka/bin/kafka-run-class.sh
+--- kafka.orig/bin/kafka-run-class.sh	2014-05-22 14:03:31.000000000 +0200
++++ kafka/bin/kafka-run-class.sh	2014-05-22 21:36:30.000000000 +0200
+@@ -31,6 +31,7 @@
+ if [ -z "$SCALA_VERSION" ]; then
+ 	SCALA_VERSION=2.8.0
+ fi
++SCALA_BIN_VERSION=$(echo "$SCALA_VERSION" | awk -vOFS=. -F. '{if ($2>=10) print $1,$2; else print $0}')
+ 
+ # run ./gradlew copyDependantLibs to get all dependant jars in a local dir
+ for file in $base_dir/core/build/dependant-libs-${SCALA_VERSION}/*.jar;
+@@ -38,7 +39,7 @@
+   CLASSPATH=$CLASSPATH:$file
+ done
+ 
+-for file in $base_dir/perf/build/libs//kafka-perf_${SCALA_VERSION}*.jar;
++for file in $base_dir/perf/build/libs//kafka-perf_${SCALA_BIN_VERSION}*.jar;
+ do
+   CLASSPATH=$CLASSPATH:$file
+ done
+@@ -69,7 +70,7 @@
+   CLASSPATH=$CLASSPATH:$file
+ done
+ 
+-for file in $base_dir/core/build/libs/kafka_${SCALA_VERSION}*.jar;
++for file in $base_dir/core/build/libs/kafka_${SCALA_BIN_VERSION}*.jar;
+ do
+   CLASSPATH=$CLASSPATH:$file
+ done

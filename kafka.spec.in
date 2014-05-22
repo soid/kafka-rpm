@@ -6,14 +6,14 @@ Group: Applications/Internet
 License: Apache (v2)
 Source0: kafka-%{version}.tar.gz
 Source1: kafka.init
-Source2: zookeeper.init
+Patch0: kafka-0.8.1.1-scalaversion.patch
 URL: http://kafka.apache.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-Distribution: Niels Basjes
-Vendor: Niels Basjes
-Packager: Niels Basjes <kafka@basjes.nl>
+Distribution: REBB Dev
+Vendor: Wehkamp
+Packager: Andrew Snare <andrewsnare@godatadriven.com>
 
-Requires: jdk >= 1.6
+Requires: jdk >= 1.7
 Requires(pre): shadow-utils
 Requires: zookeeper >= 3.3.1
 
@@ -44,21 +44,22 @@ alternatives --install /opt/kafka kafkahome  /opt/%{name}-%{version} ##INTEGERVE
 
 %preun
 service kafka stop
+alternatives --remove kafkahome  /opt/%{name}-%{version}
 
 %postun
-alternatives --remove kafkahome  /opt/%{name}-%{version}
 
 %prep
 
 %setup
 
-#%patch0 -p1
-#%patch1 -p1
+%patch0 -p1
+
+sed -i -e 's/SCALA_VERSION=[0-9.]*/SCALA_VERSION=##SCALAVERSION##/g' bin/kafka-run-class.sh
 
 %build
 # Build package
 
-./gradlew releaseTarGz
+./gradlew -PscalaVersion=##SCALAVERSION## releaseTarGz -x signArchives
 
 %install
 
@@ -89,6 +90,10 @@ echo 'export PATH=${PATH}:/opt/kafka/bin' > %{buildroot}/etc/profile.d/kafka.sh
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 
 %changelog
+* Thu May 22 2014 Andrew Snare <andrewsnare@godatadriven.nl>
+- Updated to Kafka 0.8.1.1
+- Support for different versions of Scala.
+- Minor packaging tweaks.
 * Mon Sep 16 2013 Niels Basjes <kafka@basjes.nl>
 - Refactoring the scripting
 * Fri Mar 15 2013 Mark Poole <mpoole@apache.org>
