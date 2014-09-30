@@ -1,0 +1,8 @@
+#
+# Settings that will be read when starting kafka.
+#
+
+# You can specify a JMX_PORT that wil be exposed
+#
+#JMX_PORT=9999
+

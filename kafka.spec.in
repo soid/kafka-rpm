@@ -6,6 +6,7 @@ Group: Applications/Internet
 License: Apache (v2)
 Source0: kafka-%{version}.tar.gz
 Source1: kafka.init
+Source2: kafka.default
 Patch0: kafka-0.8.1.1-scalaversion.patch
 URL: http://kafka.apache.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -69,8 +70,10 @@ sed -i -e 's/SCALA_VERSION=[0-9.]*/SCALA_VERSION=##SCALAVERSION##/g' bin/kafka-r
 %{__mkdir_p} %{buildroot}/opt/%{name}-%{version}
 %{__cp} -R * %{buildroot}/opt/%{name}-%{version}
 %{__mkdir_p} %{buildroot}/var/log/kafka
+%{__mkdir_p} %{buildroot}/etc/default/
 %{__mkdir_p} %{buildroot}/etc/rc.d/init.d
 install -m 755 %{S:1} %{buildroot}/etc/rc.d/init.d/kafka
+install -m 755 %{S:2} %{buildroot}/etc/default/kafka
 
 # Simply create this oneliner in the spec file
 %{__mkdir_p} %{buildroot}/etc/profile.d/
@@ -82,6 +85,7 @@ echo 'export PATH=${PATH}:/opt/kafka/bin' > %{buildroot}/etc/profile.d/kafka.sh
 %config /opt/%{name}-%{version}/config
 /opt/%{name}-%{version}
 /var/log/kafka
+/etc/default/kafka
 /etc/rc.d/init.d/kafka
 /etc/profile.d/kafka.sh
 
@@ -90,7 +94,9 @@ echo 'export PATH=${PATH}:/opt/kafka/bin' > %{buildroot}/etc/profile.d/kafka.sh
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 
 %changelog
-* Thu May 22 2014 Andrew Snare <andrewsnare@godatadriven.nl>
+* Tue Sep 30 2014 Kris Geusebroek <krisgeusebroek@godatadriven.com>
+- Added /etc/default/kafka
+* Thu May 22 2014 Andrew Snare <andrewsnare@godatadriven.com>
 - Updated to Kafka 0.8.1.1
 - Support for different versions of Scala.
 - Minor packaging tweaks.
