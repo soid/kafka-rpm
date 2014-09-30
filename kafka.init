@@ -10,6 +10,8 @@
 
 source /etc/rc.d/init.d/functions
 
+[ -r /etc/default/kafka ] && . /etc/default/kafka
+
 KAFKA_HOME=/opt/kafka
 KAFKA_USER=kafka
 
