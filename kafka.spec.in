@@ -14,9 +14,7 @@ Distribution: REBB Dev
 Vendor: Wehkamp
 Packager: Andrew Snare <andrewsnare@godatadriven.com>
 
-Requires: jdk >= 1.7
 Requires(pre): shadow-utils
-Requires: zookeeper >= 3.3.1
 
 %description
 It is designed to support the following
