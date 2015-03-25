@@ -1,17 +1,17 @@
 # The git tag/branch of storm you need (i.e. master or 0.8.1.1)
-GIT_VERSION_TAG=0.8.1.1
+GIT_VERSION_TAG=0.8.2.1
 
 # The version of scala to build with.
-SCALA_VERSION=2.10.3
+SCALA_VERSION=2.11
 
 #The version for the RPM 
 #BEWARE THAT THIS MAY NOT CONTAIN A '-' !!!
-RPM_VERSION=0.8.1.1
+RPM_VERSION=0.8.2.1
 
 # The next thing is needed to use the latest version.
 # This is a numerical value that should increase with a newer release
 # This may NOT start with a '0' !!
-RPM_VERSION_INTEGER=8110
+RPM_VERSION_INTEGER=8210
 
 # =======================================================================
 
