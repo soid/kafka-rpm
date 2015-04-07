@@ -51,6 +51,7 @@ alternatives --remove kafkahome  /opt/%{name}-%{version}
 %setup
 
 sed -i -e 's/SCALA_VERSION=[0-9.]*/SCALA_VERSION=##SCALAVERSION##/g' bin/kafka-run-class.sh
+sed -i -e 's/SCALA_BINARY_VERSION=[0-9.]*/SCALA_BINARY_VERSION=##SCALAVERSION##/g' bin/kafka-run-class.sh
 
 #%patch0 -p1
 #%patch1 -p1
