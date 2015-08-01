@@ -15,31 +15,55 @@ source /etc/rc.d/init.d/functions
 KAFKA_HOME=/opt/kafka
 KAFKA_USER=kafka
 
-start() {
+startKafka() {
     echo -n "Starting Kafka:"
     /sbin/runuser $KAFKA_USER -c "nohup $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties > /var/log/kafka/server.out 2> /var/log/kafka/server.err &"
     echo " done."
 }
 
-stop() {
-    echo -n "Stopping Kafka: "
-    PID=$(ps -ef | grep kafka.Kafka | grep -v grep | awk '{print $2}')
+startZk() {
+    echo -n "Starting Zookeeper:"
+    /sbin/runuser $KAFKA_USER -c "nohup $KAFKA_HOME/bin/zookeeper-server-start.sh $KAFKA_HOME/config/zookeeper.properties > /var/log/kafka/zookeeper.out 2> /var/log/kafka/zookeeper.err &"
+    echo " done."
+}
+
+start() {
+    startZk
+    startKafka
+}
+
+stopProcess() {
+    echo -n "Stopping $1: "
+    PID=$(ps -ef | grep $1 | grep -v grep | awk '{print $2}')
     /sbin/runuser  $KAFKA_USER  -c "kill $PID"
 
     SEC_REMAINING=180
     while [[ ${SEC_REMAINING:--1} -gt 0 ]] && [[ ${PID:--1} -gt 0 ]]
     do
-      PID=$(ps -ef | grep kafka.Kafka | grep -v grep | awk '{print $2}')
+      PID=$(ps -ef | grep $1 | grep -v grep | awk '{print $2}')
       SEC_REMAINING=$(($SEC_REMAINING - 1))
       sleep 1
     done
 
     if [[ ${PID:--1} -gt 0 ]] ; then
-      echo "Soft stop timed out. Forcing Kafka to stop"
+      echo "Soft stop timed out. Forcing $1 to stop"
       hardstop
     fi
 
     echo " done."
+}
+
+stopKafka() {
+    stopProcess kafka.Kafka
+}
+
+stopZk() {
+    stopProcess zookeeper.server.quorum.QuorumPeerMain
+}
+
+stop() {
+    stopKafka
+    stopZk
 }
 
 hardstop() {
@@ -87,7 +111,7 @@ case "$1" in
     ;;
 
   *)
-    echo "Usage: $0 {start|stop|hardstop|status|restart}"
+    echo "Usage: $0 {start|startKafka|startZk | stop|stopKafka|stopZk | hardstop|status|restart}"
     exit 1
     ;;
 
